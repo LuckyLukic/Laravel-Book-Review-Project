@@ -5,10 +5,33 @@
     <form action="{{ route('books.index') }}" method="GET" class="mb-4 flex items-center space-x-2">
 
         <input type="text" name="title" placeholder="Search by Title" value="{{ request('title') }}" class="input" h-10>
+        {{-- title=name passes the value as $title, request('title') retains the value from the request if has been done in order to prefill the field. --}}
+        {{-- pass the value to title and retain it when we submit the form --}}
         {{-- {{ request('title')}} to populate the value with the last reequest, if any --}}
+        <input type="hidden" name="filter" value="{{ request('filter') }}">
         <button type="submit" class="btn h-10">Search</button>
         <a href="{{ route('books.index') }}" class="btn h-10">Clear</a>
     </form>
+
+    <div class="filter-container mb-4 flex">
+        @php
+            $filters = [
+                '' => 'Latest',
+                'popular_last_month' => 'Popular Last Month',
+                'popular_last_6months' => 'Popular Last 6 Months',
+                'highest_rated_last_month' => 'Highest Rated Last Month',
+                'highest_rated_last_6month' => 'Highest Rated Last 6 Months',
+            ];
+        @endphp
+
+        @foreach ($filters as $key => $value)
+            <a href="{{ route('books.index', [...request()->query(), 'filter' => $key]) }}" {{-- ...request()->query() returns an associative array with all the params in request. I use ... to unpack and merge this array with all the other params passes in the main associative array --}}
+                class={{ request('filter') === $key || (request('filter') === null && $key === '') ? 'filter-item-active' : 'filter-item' }}>
+                {{ $value }}
+            </a>
+        @endforeach
+
+    </div>
 
     <ul>
         @forelse ($books as $book)
