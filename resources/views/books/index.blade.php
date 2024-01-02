@@ -1,7 +1,14 @@
 @extends('layout.app')
 
 @section('content')
-    <form action=""></form>
+    <h1 class="mb-10 text-2xl">Books</h1>
+    <form action="{{ route('books.index') }}" method="GET" class="mb-4 flex items-center space-x-2">
+
+        <input type="text" name="title" placeholder="Search by Title" value="{{ request('title') }}" class="input" h-10>
+        {{-- {{ request('title')}} to populate the value with the last reequest, if any --}}
+        <button type="submit" class="btn h-10">Search</button>
+        <a href="{{ route('books.index') }}" class="btn h-10">Clear</a>
+    </form>
 
     <ul>
         @forelse ($books as $book)
