@@ -13,9 +13,23 @@ class BookController extends Controller
     public function index(Request $request)
     {
         $title = $request->input('title'); //input is used to retrieve a specific item of input data.
+        $filter = $request->input('filter', ''); //if is not set it  as default empty value
+
         $books = Book::when($title, function ($query, $title) { //in the context of when (it applies to other contexts) $query is an istance of the query Builder automatically passed
             return $query->title($title); // title recals our scoped query scopedTitle
-        })->get();  // get fetches all books conditionally: if title is present and not null then by title, else all books.
+        });
+
+        $books = match ($filter) {
+
+            'popular_last_month' => $books->popularLastMonth(),
+            'popular_last_6month' => $books->popularLast6Month(),
+            'highest_rated_last_month' => $books->highestRatedLasMonth(),
+            'highest_rated_last_6month' => $books->highestRatedLast6Months(),
+            default => $books->latest()
+
+        };
+
+        $books = $books->get();
 
         return view('books.index', ['books' => $books]);
     }
