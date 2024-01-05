@@ -15,7 +15,7 @@ use App\Http\Controllers\BookController;
 */
 
 Route::get('/', function () {
-    return view('layout.app');
+    return redirect()->route('books.index');
 });
 
 Route::resource('/books', BookController::class);
